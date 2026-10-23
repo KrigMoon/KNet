@@ -1,9 +1,11 @@
 package KNet
 
 import (
-	knetpb "github.com/KrigMoon/KNet/Proto/gen"
 	"context"
 	"sync"
+
+	"github.com/KrigMoon/KNet/KNetCore"
+	knetpb "github.com/KrigMoon/KNet/Proto/gen"
 
 	"github.com/KrigMoon/KCommandParser"
 	"github.com/KrigMoon/KJournal"
@@ -13,6 +15,7 @@ import (
 type KNetSettings struct {
 	Journal             *KJournal.KJournal
 	ExternalCommandsMap map[string]struct{}
+	AutoRun             []string
 }
 
 type KNet struct {
@@ -33,6 +36,8 @@ type KNet struct {
 	// Карты
 	localCommandsMap    map[string]CommandContainer
 	externalCommandsMap map[string]struct{}
+	// Сетевое ядро
+	knc KNetCore.KNetCore
 }
 
 func (kn *KNet) Run(settings KNetSettings) {
@@ -71,6 +76,16 @@ func (kn *KNet) Run(settings KNetSettings) {
 
 	kn.status = knetpb.Status_ON
 	kn.journal.Write(KJournal.NewRecord("KNet", knetpb.RecordLevel_INFO.String(), knetpb.RecordCode_LIFECIRCLE.String(), "KNet ON"))
+
+	kn.knc.Run(KNetCore.KNetCoreSettings{
+		Journal: kn.journal,
+	})
+
+	if kn.settings.AutoRun != nil {
+		for _, cmd := range kn.settings.AutoRun {
+			kn.Execute(cmd)
+		}
+	}
 }
 
 func (kn *KNet) EndWork() {
@@ -85,6 +100,8 @@ func (kn *KNet) EndWork() {
 
 func (kn *KNet) stop() {
 	<-kn.ctx.Done()
+
+	kn.knc.EndWork()
 
 	//* Включение
 	kn.status = knetpb.Status_STOP
