@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package knetpb;
 
-option go_package = "Proto/gen/knetpb";
+option go_package = "github.com/KrigMoon/KNet/Proto/gen/knetpb";
 
 enum Status {
   OFF     = 0;

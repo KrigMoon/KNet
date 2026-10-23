@@ -178,7 +178,7 @@ const file_app_proto_rawDesc = "" +
 	"\n" +
 	"RecordCode\x12\x0e\n" +
 	"\n" +
-	"LIFECIRCLE\x10\x00B\x12Z\x10Proto/gen/knetpbb\x06proto3"
+	"LIFECIRCLE\x10\x00B+Z)github.com/KrigMoon/KNet/Proto/gen/knetpbb\x06proto3"
 
 var (
 	file_app_proto_rawDescOnce sync.Once
