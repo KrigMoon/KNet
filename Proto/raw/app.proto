@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package knetpb;
+
+option go_package = "Proto/gen/knetpb";
+
+enum Status {
+  OFF     = 0;
+  RUNNING = 1;
+  ON      = 2;
+  STOP    = 3;
+}
+
+enum RecordLevel {
+  INFO = 0;
+  ERROR = 1;
+}
+
+enum RecordCode {
+  LIFECIRCLE = 0;
+}
