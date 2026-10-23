@@ -1,4 +1,4 @@
-module KNet
+module github.com/KrigMoon/KNet
 
 go 1.25.0
 
