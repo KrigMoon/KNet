@@ -1,7 +1,7 @@
 package KNet
 
 import (
-	knetpb "KNet/Proto/gen"
+	knetpb "github.com/KrigMoon/KNet/Proto/gen"
 	"context"
 	"sync"
 
