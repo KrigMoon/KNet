@@ -13,9 +13,13 @@ enum Status {
 
 enum RecordLevel {
   INFO = 0;
-  ERROR = 1;
+  WARNING = 1;
+  ERROR = 2;
 }
 
 enum RecordCode {
   LIFECIRCLE = 0;
+  DATA = 1;
+  NET = 2;
+  CommandCenter = 4;
 }

@@ -4,13 +4,15 @@ import (
 	"fmt"
 
 	"github.com/KrigMoon/KCommandParser"
+	"github.com/KrigMoon/KJournal"
+	knetpb "github.com/KrigMoon/KNet/Proto/gen"
 )
 
 //region Команды
 
 type CommandContainer struct {
 	Check   func(*KCommandParser.Command) (*KCommandParser.Response, bool)
-	Execute func(*KCommandParser.Command) *KCommandParser.Response
+	Execute func(CMDCore, *KCommandParser.Command) *KCommandParser.Response
 }
 
 func (kn *KNet) Execute(command string) error {
@@ -55,7 +57,7 @@ func (kn *KNet) executer() {
 			container := kn.localCommandsMap[cmd.Name]
 			resp, ok := container.Check(cmd)
 			if ok {
-				resp = container.Execute(cmd)
+				resp = container.Execute(&kn.knc, cmd)
 			}
 			kn.WriteResponse(resp)
 		}
@@ -91,6 +93,58 @@ func (kn *KNet) GetResponse() (*KCommandParser.Response, bool) {
 	select {
 	case req, ok := <-kn.responses:
 		return req, ok
+	default:
+		return nil, false
+	}
+}
+
+//endregion
+
+//region Пакеты
+
+func (kn *KNet) readerPKG() {
+	kn.proccesses.Add(1)
+	defer kn.proccesses.Done()
+
+	for {
+		select {
+		case <-kn.ctx.Done():
+			return
+		default:
+			pkg := kn.knc.Read()
+			if pkg == nil {
+				continue
+			}
+
+			switch pkg.Type {
+			case knetpb.PackageType_COMMAND:
+				kn.journal.Write(KJournal.NewRecord(
+					"KNet",
+					knetpb.RecordLevel_WARNING.String(),
+					knetpb.RecordCode_DATA.String(),
+					fmt.Sprintf("Получена команда от %s", pkg.From),
+				))
+				kn.Execute(pkg.Data)
+			default:
+				select {
+				case kn.packages <- pkg:
+				default:
+					kn.journal.Write(KJournal.NewRecord(
+						"KNet",
+						knetpb.RecordLevel_WARNING.String(),
+						knetpb.RecordCode_DATA.String(),
+						"Буфер обработаных пакетов заполнен",
+					))
+				}
+			}
+		}
+	}
+}
+
+func (kn *KNet) GetPackages() (*knetpb.Package, bool) {
+	select {
+	case pkg, ok := <-kn.packages:
+		return pkg, ok
 	default:
 		return nil, false
 	}

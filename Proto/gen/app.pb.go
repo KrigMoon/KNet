@@ -76,19 +76,22 @@ func (Status) EnumDescriptor() ([]byte, []int) {
 type RecordLevel int32
 
 const (
-	RecordLevel_INFO  RecordLevel = 0
-	RecordLevel_ERROR RecordLevel = 1
+	RecordLevel_INFO    RecordLevel = 0
+	RecordLevel_WARNING RecordLevel = 1
+	RecordLevel_ERROR   RecordLevel = 2
 )
 
 // Enum value maps for RecordLevel.
 var (
 	RecordLevel_name = map[int32]string{
 		0: "INFO",
-		1: "ERROR",
+		1: "WARNING",
+		2: "ERROR",
 	}
 	RecordLevel_value = map[string]int32{
-		"INFO":  0,
-		"ERROR": 1,
+		"INFO":    0,
+		"WARNING": 1,
+		"ERROR":   2,
 	}
 )
 
@@ -122,16 +125,25 @@ func (RecordLevel) EnumDescriptor() ([]byte, []int) {
 type RecordCode int32
 
 const (
-	RecordCode_LIFECIRCLE RecordCode = 0
+	RecordCode_LIFECIRCLE    RecordCode = 0
+	RecordCode_DATA          RecordCode = 1
+	RecordCode_NET           RecordCode = 2
+	RecordCode_CommandCenter RecordCode = 4
 )
 
 // Enum value maps for RecordCode.
 var (
 	RecordCode_name = map[int32]string{
 		0: "LIFECIRCLE",
+		1: "DATA",
+		2: "NET",
+		4: "CommandCenter",
 	}
 	RecordCode_value = map[string]int32{
-		"LIFECIRCLE": 0,
+		"LIFECIRCLE":    0,
+		"DATA":          1,
+		"NET":           2,
+		"CommandCenter": 4,
 	}
 )
 
@@ -171,14 +183,18 @@ const file_app_proto_rawDesc = "" +
 	"\x03OFF\x10\x00\x12\v\n" +
 	"\aRUNNING\x10\x01\x12\x06\n" +
 	"\x02ON\x10\x02\x12\b\n" +
-	"\x04STOP\x10\x03*\"\n" +
+	"\x04STOP\x10\x03*/\n" +
 	"\vRecordLevel\x12\b\n" +
-	"\x04INFO\x10\x00\x12\t\n" +
-	"\x05ERROR\x10\x01*\x1c\n" +
+	"\x04INFO\x10\x00\x12\v\n" +
+	"\aWARNING\x10\x01\x12\t\n" +
+	"\x05ERROR\x10\x02*B\n" +
 	"\n" +
 	"RecordCode\x12\x0e\n" +
 	"\n" +
-	"LIFECIRCLE\x10\x00B+Z)github.com/KrigMoon/KNet/Proto/gen/knetpbb\x06proto3"
+	"LIFECIRCLE\x10\x00\x12\b\n" +
+	"\x04DATA\x10\x01\x12\a\n" +
+	"\x03NET\x10\x02\x12\x11\n" +
+	"\rCommandCenter\x10\x04B+Z)github.com/KrigMoon/KNet/Proto/gen/knetpbb\x06proto3"
 
 var (
 	file_app_proto_rawDescOnce sync.Once

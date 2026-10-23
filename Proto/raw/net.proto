@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package knetpb;
+
+option go_package = "github.com/KrigMoon/KNet/Proto/gen/knetpb";
+
+//region Пакеты
+
+enum PackageType {
+  MESSAGE = 0;
+  JSON    = 1;
+  COMMAND = 2;
+}
+
+message Package {
+  string      from = 1;
+  string      to   = 2;
+  PackageType type = 3;
+  string      data = 4;
+}
+
+//endregion
+
+//region Узел
+
+enum TypeNode {
+  SERVER = 0;
+  CLIENT = 1;
+}
+
+message Node {
+  string   Id                    = 1;
+  string   Name                  = 2;
+  TypeNode Type                  = 3;
+  string   ListeningIP           = 4;
+  int32    ListeningPort         = 5;
+}
+
+//endregion
+
+//region Сеть
+service NetNode {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Disconnect(Node) returns (Void);
+  rpc Send(Package) returns (SendResponse);
+  rpc GetPeers(Node) returns (PeersResponse);
+}
+
+//region Регистрация
+
+message RegisterRequest {
+  Node   myNode   = 1;
+  string Password = 2;
+}
+
+message RegisterResponse {
+  Node myNode  = 1;
+  bool success = 2;
+}
+
+//endregion
+
+//region Ответы
+
+message SendResponse {
+  bool   ok    = 1;
+  string error = 2;
+}
+//endregion
+
+//region Пиры
+
+message PeersResponse {
+  repeated Node peers = 1;
+}
+
+//endregion
+//endregion
+
+//region Прочее
+
+message Void {
+
+}
+
+//endregion
