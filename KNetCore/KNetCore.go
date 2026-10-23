@@ -73,6 +73,9 @@ func (knc *KNetCore) Run(settings KNetCoreSettings) {
 	knc.journal.AddWriter()
 	knc.MyNode = knc.settings.MyNode
 
+	knc.entryPackages = make(chan *knetpb.Package, 256)
+	knc.exitPackages = make(chan *knetpb.Package, 256)
+
 	//* Включение
 	knc.status = knetpb.Status_RUNNING
 	knc.journal.Write(KJournal.NewRecord("KNetCore", knetpb.RecordLevel_INFO.String(), knetpb.RecordCode_LIFECIRCLE.String(), "KNetCore RUNNING"))
