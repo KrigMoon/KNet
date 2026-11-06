@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package knetpb;
+
+option go_package = "github.com/KrigMoon/KNet/Proto/gen/knetpb";
+
+//region Package
+
+enum PackageType {
+  MESSAGE = 0;
+  JSON    = 1;
+  COMMAND = 2;
+  FILE    = 3;
+}
+
+enum DataType {
+  BYTES  = 0;
+  STRING = 1;
+}
+
+message Package {
+  string      from      = 1;
+  string      to        = 2;
+  PackageType type      = 3;
+  DataType    data_type = 4;
+  string      metadata  = 5;
+  oneof payload {
+    string text = 6;
+    bytes  blob = 7;
+  }
+}
+
+//endregion
+
+//region Node
+
+enum TypeNode {
+  SERVER = 0;
+  CLIENT = 1;
+}
+
+message Node {
+  string   Id            = 1;
+  string   Name          = 2;
+  TypeNode Type          = 3;
+  string   ListeningIP   = 4;
+  int32    ListeningPort = 5;
+}
+
+//endregion
+
+//region Service
+
+service NetNode {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Disconnect(Node) returns (Void);
+  rpc Send(Package) returns (SendResponse);
+  rpc GetPeers(Node) returns (PeersResponse);
+}
+
+//endregion
+
+//region RPC contracts
+
+//region^ Register
+
+message RegisterRequest {
+  Node   myNode   = 1;
+  string Password = 2;
+}
+
+message RegisterResponse {
+  Node myNode  = 1;
+  bool success = 2;
+}
+
+//endregion^
+
+//region^ Send and peer's colections
+
+message SendResponse {
+  bool   ok    = 1;
+  string error = 2;
+}
+
+message PeersResponse {
+  repeated Node peers = 1;
+}
+
+//endregion^
+
+//region^ Other
+
+message Void {
+
+}
+
+//endregion^
+
+//endregion
